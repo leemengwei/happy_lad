@@ -60,7 +60,7 @@ def index():
         config['name'] = request.form['name']
         
         # Save the updated configuration to config.json
-        with open('config.json', 'w') as config_file:
+        with open('../config.json', 'w') as config_file:
             json.dump(config, config_file)
         
         # Flash a success message
@@ -71,7 +71,7 @@ def index():
 
 @app.route('/cam.jpg')
 def get_image():
-    return send_from_directory('.', 'cam.jpg')
+    return send_from_directory('..', 'cam.jpg')
 
 
 if __name__ == '__main__':
