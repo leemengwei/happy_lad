@@ -5,7 +5,7 @@ import time
 import json
 import glob
 from IPython import embed
-import main_pipe
+import ds_pipeline
 import threading
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Needed for flash messages
@@ -34,13 +34,13 @@ html_template = '''
   {% endwith %}
   <form method="POST">
     <label for="time_span">记录时长(Years，推荐10年以上才能有效观察肥肥变大):</label>
-    <input type="number" id="time_span" name="time_span" value="{{ config.time_span }}"><br><br>
+    <input type="float" id="time_span" name="time_span" value="{{ config.time_span }}"><br><br>
     
     <label for="cold_down_hours">固定记录间隔(Hours):</label>
-    <input type="number" id="cold_down_hours" name="cold_down_hours" value="{{ config.cold_down_hours }}"><br><br>
+    <input type="float" id="cold_down_hours" name="cold_down_hours" value="{{ config.cold_down_hours }}"><br><br>
     
-    <label for="name">房间名称</label>
-    <input type="text" id="name" name="name" value="{{ config.name }}"><br><br>
+    <label for="room_name">房间名称</label>
+    <input type="text" id="room_name" name="room_name" value="{{ config.room_name }}"><br><br>
     
     <input type="submit" value="更新">
   </form>
@@ -57,7 +57,7 @@ def index():
         # Update configuration with form data
         config['time_span'] = float(request.form['time_span'])
         config['cold_down_hours'] = float(request.form['cold_down_hours'])
-        config['name'] = request.form['name']
+        config['room_name'] = request.form['room_name']
         
         # Save the updated configuration to config.json
         with open('../config.json', 'w') as config_file:
@@ -74,18 +74,16 @@ def index():
 
 @app.route('/latest.jpg')
 def get_image():
-    pipe_class.force_sample_this_time = True
+    pipe_class.now_lottery_chance = 1
     time.sleep(1)
     images = glob.glob("../images/*.jpg")
     images.sort()
-    print("Recent samples", images[-10:], dir(pipe_class), pipe_class, pipe_class.sample_chance)
-    # rename this last image to latest.jpg.jpg
-    os.system("cp -f %s /tmp/latest.jpg" % images[-1])
-    return send_from_directory('/tmp', 'latest.jpg')
+    print("Recent samples", images[-10:])
+    return send_from_directory('../images/', 'latest.jpg')
 
 
 if __name__ == '__main__':
-    pipe_class = main_pipe.ALL()
+    pipe_class = ds_pipeline.ALL()
     pipe_class.load_config()
     print("Starting in 3 sec!!!!!!!!!!!!!!")
     time.sleep(2)
