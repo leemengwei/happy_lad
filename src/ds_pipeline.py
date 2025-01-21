@@ -42,11 +42,9 @@ class ALL():
 
         # Source element for reading the image files
         print("Creating Source \n")
-        source = Gst.ElementFactory.make("v4l2src", "usb-cam-source")
-        if not source:
+        self.source = Gst.ElementFactory.make("v4l2src", "usb-cam-source")
+        if not self.source:
             sys.stderr.write(" Unable to create Source \n")
-
-        source.set_property('device', "/dev/video0")
 
         # Set resolution using capsfilter
         caps = Gst.Caps.from_string("image/jpeg, width=%s, height=%s, framerate=30/1"%(WIDTH, HEIGHT)) 
@@ -115,7 +113,7 @@ class ALL():
         pgie.set_property('config-file-path', "dstest1_pgie_config.txt")
 
         # Add elements to self.pipeline
-        self.pipeline.add(source)
+        self.pipeline.add(self.source)
         self.pipeline.add(caps_filter)
         self.pipeline.add(jpegdec)
         self.pipeline.add(vidconv)
@@ -128,7 +126,7 @@ class ALL():
         self.pipeline.add(udpsink)
 
         # Link elements in the self.pipeline
-        source.link(caps_filter)
+        self.source.link(caps_filter)
         caps_filter.link(jpegdec)
         jpegdec.link(vidconv)
         vidconv.link(nvvidconv)
@@ -150,13 +148,14 @@ class ALL():
         osdsinkpad.add_probe(Gst.PadProbeType.BUFFER, self.osd_sink_pad_buffer_probe, self)
 
 
-    def load_config(self):
-        self.configs = json.load(open(project_dir+'config.json'))
+    def load_config(self, device_location, config_file):
+        self.configs = json.load(open(project_dir+config_file))
         self.sample_chance = (200*1024*2)/(self.configs['time_span']*365*24*3600*30)
         self.room_name= self.configs['room_name']
         self.cold_down_seconds = self.configs['cold_down_hours'] * 3600
         self.now_lottery_chance = random.random()
         self.last_sample_time = 0
+        self.source.set_property('device', device_location)
 
     def osd_sink_pad_buffer_probe(self, pad, info, u_data):
         def do_sample():
@@ -164,7 +163,7 @@ class ALL():
             cv2.putText(frame, timestamp, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
             cv2.imwrite(project_dir+"/images/"+img_name, frame)
-            resized_frame = cv2.resize(frame, (int(WIDTH/3), int(HEIGHT/3)), interpolation=cv2.INTER_AREA)
+            resized_frame = cv2.resize(frame, (int(WIDTH/2), int(HEIGHT/2)), interpolation=cv2.INTER_AREA)
             cv2.imwrite(project_dir+"/images/latest.jpg", resized_frame)
             return
         frame_number = 0
@@ -206,9 +205,9 @@ class ALL():
                     break
 
             # Get current timestamp
-            timestamp = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())
+            timestamp = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
             # 我的存图逻辑
-            img_name = "{}_{}.jpg".format(self.room_name, timestamp)
+            img_name = "{}_{}.jpg".format(self.room_name, timestamp.replace("/", "-").replace(" ", "_").replace(":","-"))
             self.not_sample_chance = 1 - (self.sample_chance * obj_counter[PGIE_CLASS_ID_PERSON])
             self.up_to_now_time = time.time() - self.last_sample_time
             if self.up_to_now_time >= self.cold_down_seconds:
@@ -265,7 +264,7 @@ class ALL():
 # # Just for Test, run in web.py
 if __name__ == '__main__':
     all = ALL()
-    all.load_config()
+    all.load_config("/dev/video0", "config.json")
     print("Starting in 3 sec!!!!!!!!!!!!!!")
     time.sleep(3)
     all.run_pipe()
