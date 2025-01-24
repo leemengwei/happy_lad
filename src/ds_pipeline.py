@@ -223,7 +223,7 @@ class ALL():
             display_meta.num_labels = 1
             py_nvosd_text_params = display_meta.text_params[0]
 
-            py_nvosd_text_params.display_text = "notsampe={}  Time={} Frame Number={} Sample_Chance={} lottery_get={} Up_to_now_Sec={} Number of Objects={} Vehicle_count={} Person_count={} Configs={} ".format(
+            py_nvosd_text_params.display_text = "not_sample_chance={}  Time={} Frame Number={} Sample_Chance={} lottery_get={} Up_to_now_Sec={} Number of Objects={} Vehicle_count={} Person_count={} Configs={} ".format(
                 self.not_sample_chance, timestamp, frame_number, self.sample_chance, self.now_lottery_chance, self.up_to_now_time, num_rects, obj_counter[PGIE_CLASS_ID_VEHICLE], obj_counter[PGIE_CLASS_ID_PERSON], self.configs)
 
             py_nvosd_text_params.x_offset = 10
