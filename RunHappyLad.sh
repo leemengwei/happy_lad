@@ -17,8 +17,8 @@ echo "All The Best"
 # DONE: cron jobs... for preventing device hang up 
 # DONE: static ip
 
-# TODO: web page: view & saved images
-# TODO  add datetime on frame
+# DONE: web page: view & saved images
+# DONE  add datetime on frame
 
 # optional: add a button
 # optional: rtsp server

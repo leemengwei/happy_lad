@@ -163,7 +163,7 @@ class ALL():
             cv2.putText(frame, timestamp, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
             cv2.imwrite(project_dir+"/images/"+img_name, frame)
-            resized_frame = cv2.resize(frame, (int(WIDTH/2), int(HEIGHT/2)), interpolation=cv2.INTER_AREA)
+            resized_frame = cv2.resize(frame, (int(WIDTH/1.75), int(HEIGHT/1.75)), interpolation=cv2.INTER_AREA)
             cv2.imwrite(project_dir+"/images/latest.jpg", resized_frame)
             return
         frame_number = 0
