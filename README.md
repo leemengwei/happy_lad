@@ -14,6 +14,6 @@ pip install -r requirements
 sudo cp happy_lad.service /etc/systemd/system/happy_lad.service
 sudo systemctl daemon-reload;sudo systemctl restart happy_lad.service;sleep 2;sudo systemctl status happy_lad.service
 sudo journalctl -u happy_lad.service -f
-sudo crontab -e   # reboot every monday 3'o clock: 0 3 * * 1 /sbin/reboot
+sudo crontab -e   # reboot every monday 3'o clock: 0 3 * * 1 /sbin/reboot   #不重启了 新系统开机无法主动发现摄像头必须插拔 费劲
 sudo service cron restart
 sudo crontab -l  

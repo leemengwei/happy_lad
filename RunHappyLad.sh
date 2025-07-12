@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+# echo "2-3.2:1.0" | sudo tee /sys/bus/usb/drivers/uvcvideo/bind
+# echo "2-3.3:1.0" | sudo tee /sys/bus/usb/drivers/uvcvideo/bind
 
 echo "=====Happy Lad Recorder====="
 sleep 1
