@@ -16,6 +16,7 @@ from PIL import Image
 import numpy as np
 import cv2
 import json
+import datetime
 from IPython import embed
 project_dir = "/home/feifeichouchou/happy_lad/"
 PGIE_CLASS_ID_VEHICLE = 0
@@ -154,7 +155,7 @@ class ALL():
         self.room_name= self.configs['room_name']
         self.cold_down_seconds = self.configs['cold_down_hours'] * 3600
         self.now_lottery_chance = random.random()
-        self.last_sample_time = 0
+        self.last_sample_datetime = datetime.datetime.today().replace(hour=12, minute=0, second=0, microsecond=0)
         self.source.set_property('device', device_location)
 
     def osd_sink_pad_buffer_probe(self, pad, info, u_data):
@@ -209,10 +210,10 @@ class ALL():
             # 我的存图逻辑
             img_name = "{}_{}.jpg".format(self.room_name, timestamp.replace("/", "-").replace(" ", "_").replace(":","-"))
             self.not_sample_chance = 1 - (self.sample_chance * obj_counter[PGIE_CLASS_ID_PERSON])
-            self.up_to_now_time = time.time() - self.last_sample_time
+            self.up_to_now_time = (datetime.datetime.now() - self.last_sample_datetime).seconds
             if self.up_to_now_time >= self.cold_down_seconds:
                 self.now_lottery_chance = 1   
-                self.last_sample_time = time.time()
+                self.last_sample_datetime = datetime.datetime.now()
             if self.now_lottery_chance >= self.not_sample_chance:
                 do_sample()
                 print(f"Sampled @{self.now_lottery_chance} with not chance {self.not_sample_chance*100}%%: {img_name}"*100)

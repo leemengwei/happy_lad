@@ -1,6 +1,4 @@
 
-# StandardOuput=null
-
 [Unit]
 Description=HappyChouStartupScript
 After=network.target
@@ -11,8 +9,8 @@ Group=feifeichouchou
 ExecStart=/home/feifeichouchou/happy_lad/RunHappyLad.sh 2>&1
 Restart=always
 RestartSec=5
-#StandardOuput=null
-#StandardError=inherit
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=multi-user.target
